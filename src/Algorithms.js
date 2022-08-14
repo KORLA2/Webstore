@@ -11,8 +11,6 @@ function Algorithms() {
         <Pulse>
           <Link to="Queue">Graph</Link>
         </Pulse>
-
-        
       </Head>
   )
 }

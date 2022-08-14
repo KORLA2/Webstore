@@ -12,27 +12,29 @@ import {animate, motion} from 'framer-motion'
  useEffect(() => {
 
 
+
    if(index<animatedPairs.length&&sort===1){
-  console.log(index,sort)
   
 
      setTimeout(() => {
-  
+
           Array[animatedPairs[index].i] =
 
           Array[animatedPairs[index].i] +
 
+          
+
           Array[animatedPairs[index].j] -
 
           (Array[animatedPairs[index].j] = Array[animatedPairs[index].i]);
-// setArray(Array)
-// setanimatedPairs(animatedPairs);
+
           if(index<animatedPairs.length)
 
 setindex(index+1);
 
-      },1000);
+      },1000+index);
     }
+
 
     }, [sort,index,i]);
 
@@ -47,12 +49,13 @@ setindex(index+1);
               sort === 0 ? (
               Array.map((data,idx)=>(
 
-              <motion.div key={data} layout>{data}</motion.div>
+
+              <motion.div key={data*Math.random()*100} layout>{data}</motion.div>
               ))
             ) :
              (
               Array.map((item, idx) => (
-                <motion.div key={item} layout>
+                <motion.div key={item} >
                   {item}
                 </motion.div>
               ))

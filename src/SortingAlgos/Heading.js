@@ -36,6 +36,8 @@ let Head = styled.div`
   width: 100vw;
   background: green;
   display: flex;
+  position:absolute;
+  top:0px;
   padding: 10px;
   justify-content: space-evenly;
   align-items: center;

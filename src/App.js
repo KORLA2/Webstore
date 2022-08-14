@@ -2,6 +2,7 @@ import React ,{useState} from "react";
 import { BrowserRouter as Router,Routes,Route ,Link} from "react-router-dom";
 import styled ,{keyframes}from "styled-components";
 import Stack from "./ds/stack";
+import DisplayArray from './SortingAlgos/Display'
 import {bounce, rubberBand,tada} from 'react-animations'
 import Queue from './ds/Queue'
 import Graph from './ds/Graph'
@@ -9,6 +10,7 @@ import Heading from './SortingAlgos/Heading.js'
 import Tree from './ds/Tree';
 import List from "./ds/List";
 import Sorting from './Sorting'
+import Merge from "./SortingAlgos/Merge"
 import Bubble from './SortingAlgos/Bubble'
 import Selection from "./SortingAlgos/Selection";
 import   Algorithms  from "./Algorithms.js";
@@ -31,70 +33,96 @@ if(data)
 },[i])
 
 
-useEffect(()=>{
-
-  if(sort){
-    setanimatedPairs(Bubblepairs(Array))
-  }
-
-},[sort])
-
 
 return (
+  <div>
+    <Router>
+      <Routes>
+        <Route path="/datastructures" element={<DataStructures />} />
+        <Route path="/datastructures/stack" element={<Stack />} />
+        <Route path="/datastructures/Queue" element={<Queue />} />
+        <Route path="/datastructures/Tree" element={<Tree />} />
+        <Route path="/datastructures/Graph" element={<Graph />} />
+        <Route path="/datastructures/List" element={<List />} />
+        <Route path="/algorithms" element={<Algorithms />} />
+        <Route path="/algorithms/sorting" element={<Sorting />}></Route>
 
-    <div>
-    
-      <Router> 
-        <Routes>
-          <Route path="/datastructures" element={<DataStructures />}/>
-          <Route path="/datastructures/stack" element={<Stack />} />
-          <Route path="/datastructures/Queue" element={<Queue />} />
-          <Route path="/datastructures/Tree" element={<Tree />} />
-          <Route path="/datastructures/Graph" element={<Graph />} />
-          <Route path="/datastructures/List" element={<List />} />
-            <Route path="/algorithms" element={<Algorithms />} />
-          <Route path="/algorithms/sorting" element={<Sorting />}></Route>
+        <Route
+          path="/algorithms/sorting/Bubble"
+          element={
+            <div>
+              <Heading
+                setdata={setdata}
+                seti={seti}
+                i={i}
+                setsort={setsort}
+                sort={sort}
+              />
 
-          <Route
-            path="/algorithms/sorting/Bubble"
-            element={
-              <div>
-      
-                <Heading setdata={setdata} seti={seti} i={i} setsort={setsort} sort={sort} /> 
-                 
-                   <Bubble index={index} i={i} setindex={setindex} sort={sort} Array={Array} setArray={setArray} setanimatedPairs={setanimatedPairs} animatedPairs={animatedPairs} />
+              <Bubble
+                index={index}
+                i={i}
+                setindex={setindex}
+                sort={sort}
+                Array={Array}
+                setArray={setArray}
+                setanimatedPairs={setanimatedPairs}
+                animatedPairs={animatedPairs}
+              />
+            </div>
+          }
+        />
 
-              </div>
-
-            }
-          />
-          <Route
-            path="/algorithms/sorting/Selection"
-            element={
-              <div>
-            
-                <Heading /> <Selection />
-              </div>
-            }
-          />
-
-          <Route
-            path="*"
-            element={
-              <Head>
-                <Link to="datastructures">
-                  <Bounce>DataStructures</Bounce>
-                </Link>
-                <Link to="algorithms">
-                  <Tada>Algorithms</Tada>
-                </Link>
-              </Head>
-            }
-          />
-        </Routes>
-      </Router>
-    </div>
-  );
+        <Route
+          path="/algorithms/sorting/Selection"
+          element={
+            <div>
+              <Heading /> <Selection />
+            </div>
+          }
+        />
+        <Route
+          path="/algorithms/sorting/Merge"
+          element={
+            <Body>
+              <Heading
+                setdata={setdata}
+                seti={seti}
+                i={i}
+                setsort={setsort}
+                sort={sort}
+              />
+              <DisplayArray Array={Array} />
+              {sort === 1 && (
+                <Merge
+                  setanimatePairs={setanimatedPairs}
+                  animatedPairs={animatedPairs}
+                  Array={Array}
+                  index={index}
+                  setindex={setindex}
+            setArray={setArray}
+                />
+              )}
+            </Body>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <Head>
+              <Link to="datastructures">
+                <Bounce>DataStructures</Bounce>
+              </Link>
+              <Link to="algorithms">
+                <Tada>Algorithms</Tada>
+              </Link>
+            </Head>
+          }
+        />
+      </Routes>
+    </Router>
+  </div>
+);
 }
 
 export default App;
@@ -119,4 +147,8 @@ animation:2s ${keyframes`${rubberBand}`} infinite;
 let Tada=styled.div`
 animation:2s ${keyframes`${tada}`} infinite;
 
+`
+let Body=styled.div`
+position:relative;
+height:100vh;
 `
