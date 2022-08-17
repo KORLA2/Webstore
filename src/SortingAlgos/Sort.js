@@ -17,8 +17,8 @@ Array[i] = Array[j]+Array[i]-(Array[j]=Array[i]);
   }
   return animated;
 }
-export let MergePairs =(Array,low,high)=>{
-
+export 
+let MergePairs =(Array,low,high)=>{
 
 let animated=[];
 Array=Array.slice();
@@ -52,4 +52,40 @@ k=0;
 
 for(let i=low;i<=high;++i)Array[i]=dummy[k++];
 
+}
+
+export let QuickPairs=(Array,low,high)=>{
+
+  let animated=[];
+
+  Array=Array.slice();
+QuickSort(Array,low,high,animated);
+console.log(Array)
+return animated
+}
+
+let QuickSort=(Array,low,high,animated)=>{
+if(low>=high)return;
+let pivot=partition(Array,low,high,animated);
+
+QuickSort(Array,low,pivot-1,animated);
+QuickSort(Array, pivot+1,high,animated);
+}
+
+
+function partition(Array,low,high,animated){
+let i=low+1,j=high;
+  while(i<j){
+
+while(i<Array.length&&Array[i]<=Array[low])i++;
+while (Array[j] > Array[low])j--;
+if(i<j){ animated.push([i,j]);
+Array[i]=Array[j]+Array[i]-(Array[j]=Array[i]);
+
+}
+  }
+  animated.push([low,j]);
+  Array[low]=Array[j]+Array[low]-(Array[j]=Array[low]);
+  
+return j;
 }

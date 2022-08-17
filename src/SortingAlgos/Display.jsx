@@ -1,22 +1,23 @@
 import React from 'react'
 import {motion} from 'framer-motion'
 import styled from 'styled-components'
- let Display = ({Array}) => {
+ let Display = ({Array,setcolor,isset}) => {
   
   return (
-<Container>
-{
- Array.map((e,idx)=>(
-<motion.div key={e} layout>
-                  {e}
-                </motion.div>
+    <Container>
+      {Array.map((e, idx) => (
+      
+   
+          <motion.div key={e} layout  style={ isset&&(idx===setcolor[1]||idx===setcolor[0])&&{background:'pink'}} >
+            {e}
+          </motion.div>
+  
 
- ))        
 
-}    
 
-</Container>
-  )
+      ))}
+    </Container>
+  );
 }
 export default Display;
 let Container = styled.div`

@@ -10,11 +10,9 @@ import Heading from './SortingAlgos/Heading.js'
 import Tree from './ds/Tree';
 import List from "./ds/List";
 import Sorting from './Sorting'
-import Merge from "./SortingAlgos/Merge"
-import Bubble from './SortingAlgos/Bubble'
-import Selection from "./SortingAlgos/Selection";
+import { Bubblepairs, MergePairs ,QuickPairs} from "./SortingAlgos/Sort";
+import Swap from "./SortingAlgos/Swap";
 import   Algorithms  from "./Algorithms.js";
-import {Bubblepairs} from './SortingAlgos/Sort'
 import DataStructures from "./DataStructures.js";
 import { useEffect } from "react";
 function App() {
@@ -22,8 +20,12 @@ let [data,setdata] =useState('');
 let [animatedPairs,setanimatedPairs]=useState([])
 let [i, seti] = useState(0);
 let [sort,setsort]=useState(0);
+let [color,setcolor]=useState([]);
+let [set, isset] = useState(0);
 let [Array,setArray]=useState([])
 let [index,setindex]=useState(0);
+let [Sorts,setSorts]=useState({Bubble:0,Selection:0,Merge:0,Insertion:0,Quick:0,Heap:0});
+
 useEffect(()=>{
 if(data)
 {
@@ -32,8 +34,16 @@ if(data)
 
 },[i])
 
+useEffect(()=>{
+console.log('Akhil')
+if(Sorts.Bubble)setanimatedPairs(Bubblepairs);
+
+else if (Sorts.Merge) setanimatedPairs(MergePairs(Array,0,Array.length));
+
+else if(Sorts.Quick)setanimatedPairs(QuickPairs(Array,0,Array.length-1));
 
 
+},[Sorts])
 return (
   <div>
     <Router>
@@ -47,7 +57,7 @@ return (
         <Route path="/algorithms" element={<Algorithms />} />
         <Route path="/algorithms/sorting" element={<Sorting />}></Route>
 
-        <Route
+        {/* <Route
           path="/algorithms/sorting/Bubble"
           element={
             <div>
@@ -71,8 +81,8 @@ return (
               />
             </div>
           }
-        />
-
+        /> */}
+        {/* 
         <Route
           path="/algorithms/sorting/Selection"
           element={
@@ -80,7 +90,7 @@ return (
               <Heading /> <Selection />
             </div>
           }
-        />
+        /> */}
         <Route
           path="/algorithms/sorting/Merge"
           element={
@@ -92,20 +102,55 @@ return (
                 setsort={setsort}
                 sort={sort}
               />
-              <DisplayArray Array={Array} />
-              {sort === 1 && (
-                <Merge
-                  setanimatePairs={setanimatedPairs}
-                  animatedPairs={animatedPairs}
-                  Array={Array}
-                  index={index}
-                  setindex={setindex}
-            setArray={setArray}
-                />
-              )}
+              <DisplayArray Array={Array} setcolor={setcolor} isset={isset} />
+              {sort === 1 &&
+                ((!Sorts.Quick && setSorts({ ...Sorts, ["Quick"]: 1 })) || (
+                  <Swap
+                    color={color}
+                    setcolor={setcolor}
+                    issset={isset}
+                    setanimatePairs={setanimatedPairs}
+                    animatedPairs={animatedPairs}
+                    Array={Array}
+                    index={index}
+                    setindex={setindex}
+                    setArray={setArray}
+                  />
+                ))}
             </Body>
           }
         />
+
+        <Route
+          path="/algorithms/sorting/Quick"
+          element={
+            <Body>
+              <Heading
+                setdata={setdata}
+                seti={seti}
+                i={i}
+                setsort={setsort}
+                sort={sort}
+              />
+              <DisplayArray Array={Array} setcolor={setcolor} isset={isset} />
+
+              {sort === 1 &&
+                ((!Sorts.Quick && setSorts({ ...Sorts, ["Quick"]: 1 })) || (
+                  <Swap
+                    setcolor={setcolor}
+                    isset={isset}
+                    setanimatePairs={setanimatedPairs}
+                    animatedPairs={animatedPairs}
+                    Array={Array}
+                    index={index}
+                    setindex={setindex}
+                    setArray={setArray}
+                  />
+                ))}
+            </Body>
+          }
+        />
+
         <Route
           path="*"
           element={
