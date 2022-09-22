@@ -1,47 +1,95 @@
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import Products from './Products'
+import { BrowserRouter as Router ,Routes,Route } from 'react-router-dom'
 import {styled ,Grid,Paper,Box,Card,CardActionArea,CardMedia,CardActions,Typography,Button,CardContent} from '@material-ui/core'
 import Navbar from './Navbar'
 import usestyles from './styles'
+import { commerce } from "./Commerce";
+import Cart from './Cart'
+import Payments from './Payments'
 const App = () => {
-    let classes=usestyles();
+
+let [data, setdata] = useState([]);
+
+let [carts,setcart]=useState({});
+
+let products = async () => {
+  let { data } = await commerce.products.list();
+
+  setdata(data);
+};
+let handlecart= async ()=>{
+
+    setcart(await commerce.cart.retrieve());
+}
+let addcart=async(prid,qty)=>{
+
+let item=await commerce.cart.add(prid,qty);
+setcart(item)
+}
+let updatecart=async (prid,qty)=>{
+
+let cart=await commerce.cart.update(prid,qty)
+setcart(cart);
+console.log(cart)
+
+}
+let removecart=async (prid)=>{
+
+let res=await commerce.cart.remove(prid);
+setcart(res)
+}
+useEffect(() => {
+
+    products();
+
+  handlecart();
+
+}, []);
+
+
+console.log(carts,data)
+
   return (
     <div>
-      <Navbar />
-      <Box>
-        <Grid container justify="center" spacing={4}>
-          {Products.map((e, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-              <Card>
-                <CardActionArea>
-                  <CardMedia className={classes.media} />
-                  <CardContent className={classes.cardContent}>
-                <div >
+      <Router>
+        <Navbar total={carts.total_items} />
+        <Routes>
+          <Route
+            path="/MyCart"
+            element={
+              <Cart
+                cart={carts}
+                removecart={removecart}
+                updatecart={updatecart}
+              />
+            }
+          />
+          <Route path="/payment" 
 
-                    <Typography gutterBottom variant="h5" component="div">
-                      {e.name}
-                    </Typography>
+element={
 
-                    <Typography variant="body2" color="text.secondary">
-                      {e.desc}
-                    </Typography>
-                </div>
+  <Payments/>
+}
 
-                    <Typography variant="body2" color="text.secondary">
-                      {e.price}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-                <CardActions className={classes.cardActions}>
-                  <Button size="small" color="primary">
-                    Add to Cart
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
+          />
+
+          <Route
+            path="/"
+            element={
+              <>
+                <Grid container justify="center" spacing={4}>
+                  {data.map((e, index) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                      <Products product={e} addcart={addcart} />
+                    </Grid>
+                  ))}
+                </Grid>
+              </>
+            }
+          />
+        </Routes>
+      </Router>
     </div>
   );
 }
