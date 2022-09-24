@@ -1,12 +1,15 @@
 import React ,{useState}from 'react'
-import { InputLabel,TextField,Select,MenuItem,Button,Grid,Typography } from '@material-ui/core'
+import { InputLabel,TextField,Select,MenuItem,Button,Grid,Typography,ListItemText,ListItem, Divider } from '@material-ui/core'
 import {useForm,FormProvider} from 'react-hook-form'
 import usestyles from './styles'
 import Control from './Controller'
 import {Link} from 'react-router-dom'
 import {commerce} from './Commerce'
 import { useEffect } from 'react'
-const Address = ({id}) => {
+import useStyles from './styles'
+import { CardElement, Elements, ElementsConsumer } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+const Address = ({id,next })=> {
   let classes=usestyles()
   let [Countries,setCountries]=useState([])
   let [Country,setCountry]=useState('')
@@ -88,9 +91,10 @@ setOption(options[0].id);
 
         <FormProvider {...methods} >
           <form
-            onSubmit={methods.handleSubmit((data) => {
-              console.log(data);
-            })}
+            onSubmit={((data)=>{
+              data.preventDefault()
+              console.log(data);next({...data,Country,State})
+              })}
           >
             <Grid container spacing={3}>
               <Control name="Firstname" label="Firstname" />
@@ -143,7 +147,8 @@ setOption(options[0].id);
               <Button component={Link} to='/MyCart' variant="contained" size="small" color="secondary">
               Back to cart
               </Button>
-              <Button type='submit' variant="contained" size="small" color="primary">
+              <Button type='submit' variant="contained" size="small" color="primary"
+            >
                 Proceed to pay
               </Button>
             </div>
@@ -154,14 +159,71 @@ setOption(options[0].id);
 }
 
 export default Address
-export let Payment=()=>{
+export let Payment=({shipdata,id,back})=>{
+  console.log(shipdata)
+  let classes=useStyles();
+  let stripeapi = loadStripe(
+    "pk_test_51LlXFRSIpTfYvI0Qcgr4O9HXUKuWHegN1TmF8EBA5YUukDwz49Hy20XyVAqbTCreFfubUeuTABbvBvJqPKeR9kvn00LfXp8SH6"
+  );
+  console.log(id)
 return (
+  <div>
+    <Typography variant="h5" style={{ textAlign: "center" }}>
+      OrderSmmary
+      <Divider />
+    </Typography>
+    {id.line_items.map((prod) => (
+      <ListItem key={prod.id}>
+        <ListItemText
+          primary={prod.name}
+          secondary={`Quantity :${prod.quantity}`}
+        />
+        <Typography variant="body2">
+          {prod.line_total.formatted_with_symbol}
+        </Typography>
+      </ListItem>
+    ))}
+    <ListItem>
+      <ListItemText primary="Total Price:" />
+      <Typography>{id.subtotal.formatted_with_symbol}</Typography>
+    </ListItem>
 
-    <div>
+    <Divider />
+    <Elements stripe={stripeapi}>
+      <ElementsConsumer>
+        {({ elements, stripe }) => (
+          <form
+            onSubmit={ async (e) => {
+              e.preventDefault();
+              let cardElement = elements.getElement(CardElement);
 
-        Payment
-    </div>
-)
+              let {error,payment}=await stripe.createPaymentMethod({type:'card',card:cardElement})
+            
+            if(error)console.log(error)
+            else {
+
+            }
+            
+            }}
+          >
+            <CardElement className={classes.card} />
+            <br />
+            <br />
+            <Divider />
+            <ListItem className={classes.btngrp}>
+              <Button variant="outlined" onClick={() => back()}>
+                Go Back{" "}
+              </Button>
+              <Button type="submit" variant="contained">
+                Proceed to pay {id.subtotal.formatted_with_symbol}
+              </Button>
+            </ListItem>
+          </form>
+        )}
+      </ElementsConsumer>
+    </Elements>
+  </div>
+);
 
 }
 export let Confirm =()=>{

@@ -1,3 +1,4 @@
+
 import React,{useEffect,useState} from 'react'
 import Products from './Products'
 import { BrowserRouter as Router ,Routes,Route } from 'react-router-dom'
@@ -8,8 +9,8 @@ import { commerce } from "./Commerce";
 import Cart from './Cart'
 import Payments from './Payments'
 const App = () => {
+let [data,setdata]=useState([])
 
-let [data, setdata] = useState([]);
 
 let [carts,setcart]=useState({});
 
@@ -48,7 +49,6 @@ useEffect(() => {
 }, []);
 
 
-console.log(carts,data)
 
   return (
     <div>

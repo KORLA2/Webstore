@@ -1,9 +1,10 @@
-import React from 'react'
+import React,{useState} from 'react'
 import {Grid,Card,CardActionArea,ButtonGroup,CardActions,Button,CardContent,CardMedia,Typography} from '@material-ui/core'
 import  usestyles from './styles.js'
 import {Link} from 'react-router-dom'
 const Cart = ({cart,updatecart,removecart}) => {
   console.log(cart)
+  let [items,setitems]=useState(0);
 let classes=usestyles()
   return (
     <Card>
@@ -15,6 +16,7 @@ let classes=usestyles()
       >
         MY Cart
       </Typography>
+      <Typography  variant='body2' style={{marginBottom:'0px'}}> Beta version</Typography>
       <CardContent className={classes.cardContent}>
         <Button
           component={Link}
@@ -23,7 +25,7 @@ let classes=usestyles()
           variant="outlined"
           color="secondary"
         >
-          Continue to buy 1 items
+          Continue to buy {items} items
         </Button>
 
         <Button

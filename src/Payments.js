@@ -7,6 +7,7 @@ const Payments = ({Cart}) => {
 let steps=['Shipping Address','Complete Payment']
 let [active,setactive]=useState(0);
 let [id,setid]=useState(null);
+let [shipdata,setshipdata]=useState({});
 useEffect(()=>{
 console.log(Cart)
 let fetchtoken=async ()=>{
@@ -20,8 +21,19 @@ setid(id);
 }
 fetchtoken();
 },[Cart])
+let nextstep=()=>{
+  setactive((e)=>e+1);
+}
+let back=()=>{
+  setactive((e)=>e-1)
+}
 
-let Form=()=>active===0?id&&<Address  id={id}/>:<Payment/>
+let next=(data)=>{
+setshipdata(data)
+nextstep();
+}
+
+let Form=()=>active===0?id&&<Address  id={id}  next={next}/>:id&&<Payment id={id} shipdata={shipdata} back={back}/>
 
 
    let classes=useStyles();
@@ -42,7 +54,7 @@ return (
           ))}
         </Stepper>
 
-{ active===2?<Confirm/>:<Form/> }
+{ active===2?<Confirm/>:<Form  /> }
       </CardContent>
       </Card>
     

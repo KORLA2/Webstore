@@ -33,6 +33,6 @@ export default makeStyles(() => ({
     padding:'2rem'
   },
   card:{
-
+padding:'2rem'
   }
 }));
