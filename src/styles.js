@@ -21,7 +21,18 @@ export default makeStyles(() => ({
     alignItems: "center",
   },
   typo: {
- textAlign:'center',
+    textAlign: "center",
   },
+  column: {
+    display: "flex",
+    flexDirection:'column',
+    justifyContent: "center",
+    alignItems: "center",
+    width:'100%',
+    overflowX:'hidden',
+    padding:'2rem'
+  },
+  card:{
 
+  }
 }));

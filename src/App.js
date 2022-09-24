@@ -69,10 +69,9 @@ console.log(carts,data)
 
 element={
 
-  <Payments/>
+  <Payments Cart={carts}/>
 }
-
-          />
+ />
 
           <Route
             path="/"
