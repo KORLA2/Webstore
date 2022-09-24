@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import {Grid,Card,CardActionArea,ButtonGroup,CardActions,Button,CardContent,CardMedia,Typography} from '@material-ui/core'
+import {Grid,Card,CardActionArea,ButtonGroup,CardActions,Button,CardContent,CardMedia,Typography, CircularProgress} from '@material-ui/core'
 import  usestyles from './styles.js'
 import {Link} from 'react-router-dom'
 const Cart = ({cart,updatecart,removecart}) => {
@@ -16,7 +16,10 @@ let classes=usestyles()
       >
         MY Cart
       </Typography>
-      <Typography  variant='body2' style={{marginBottom:'0px'}}> Beta version</Typography>
+      <Typography variant="body2" style={{ marginBottom: "0px" }}>
+        {" "}
+        Beta version
+      </Typography>
       <CardContent className={classes.cardContent}>
         <Button
           component={Link}
@@ -39,7 +42,7 @@ let classes=usestyles()
         </Button>
       </CardContent>
       <Grid container justify="center" spacing={4}>
-        {cart.line_items &&
+        {cart.line_items ? (
           cart.line_items.map((product, index) => (
             <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
               <Card>
@@ -104,7 +107,12 @@ let classes=usestyles()
                 </CardActions>
               </Card>
             </Grid>
-          ))}
+          ))
+        ) : (
+          <div sx={{ display: "flex" }}>
+            <CircularProgress />
+          </div>
+        )}
       </Grid>
     </Card>
   );

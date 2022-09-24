@@ -3,11 +3,13 @@ import {Paper,Card,Stepper,Step,StepLabel,Typography,CircularProgress,Divider,Bu
 import useStyles from './styles.js'
 import { commerce } from './Commerce.js'
 import Address ,{Payment,Confirm}from './Form'
-const Payments = ({Cart}) => {
+const Payments = ({Cart,order,oncheckout,error}) => {
 let steps=['Shipping Address','Complete Payment']
 let [active,setactive]=useState(0);
+let [orderdetails,setorderdetails]=useState({});
 let [id,setid]=useState(null);
 let [shipdata,setshipdata]=useState({});
+console.log(order)
 useEffect(()=>{
 console.log(Cart)
 let fetchtoken=async ()=>{
@@ -33,7 +35,19 @@ setshipdata(data)
 nextstep();
 }
 
-let Form=()=>active===0?id&&<Address  id={id}  next={next}/>:id&&<Payment id={id} shipdata={shipdata} back={back}/>
+let Form = () =>
+  active === 0
+    ? id && <Address id={id} next={next} />
+    : id && (
+        <Payment
+          id={id}
+          shipdata={shipdata}
+          back={back}
+          setorderdetails={setorderdetails}
+          next={next}
+          oncheckout={oncheckout}
+        />
+      );
 
 
    let classes=useStyles();
@@ -54,7 +68,7 @@ return (
           ))}
         </Stepper>
 
-{ active===2?<Confirm/>:<Form  /> }
+{ active===2?<Confirm orderdetails={orderdetails}/>:<Form  /> }
       </CardContent>
       </Card>
     

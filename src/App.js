@@ -2,7 +2,7 @@
 import React,{useEffect,useState} from 'react'
 import Products from './Products'
 import { BrowserRouter as Router ,Routes,Route } from 'react-router-dom'
-import {styled ,Grid,Paper,Box,Card,CardActionArea,CardMedia,CardActions,Typography,Button,CardContent} from '@material-ui/core'
+import {styled ,Grid,Paper,Box,Card,CardActionArea,CardMedia,CardActions,Typography,Button,CardContent, CircularProgress} from '@material-ui/core'
 import Navbar from './Navbar'
 import usestyles from './styles'
 import { commerce } from "./Commerce";
@@ -10,8 +10,8 @@ import Cart from './Cart'
 import Payments from './Payments'
 const App = () => {
 let [data,setdata]=useState([])
-
-
+let [order,setorder]=useState({});
+let [error,seterror]=useState('')
 let [carts,setcart]=useState({});
 
 let products = async () => {
@@ -48,8 +48,21 @@ useEffect(() => {
 
 }, []);
 
-
-
+let refreshcart=async ()=>{
+let newcart=await commerce.cart.refresh();
+setcart(newcart);
+}
+let handlecheckout=async (id,neworder)=>{
+try{
+let incomingOrder=await commerce.checkout.capture(id,neworder);
+console.log('incoming Order')
+setorder(incomingOrder)
+refreshcart();
+}
+catch (err){
+seterror(err.data.error.message)
+}
+}
   return (
     <div>
       <Router>
@@ -69,7 +82,7 @@ useEffect(() => {
 
 element={
 
-  <Payments Cart={carts}/>
+  <Payments Cart={carts} order={order}  oncheckout={handlecheckout} error={error} />
 }
  />
 
@@ -78,11 +91,11 @@ element={
             element={
               <>
                 <Grid container justify="center" spacing={4}>
-                  {data.map((e, index) => (
+                  {data.length?data.map((e, index) => (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                       <Products product={e} addcart={addcart} />
                     </Grid>
-                  ))}
+                  )):<div ><CircularProgress/></div>}
                 </Grid>
               </>
             }

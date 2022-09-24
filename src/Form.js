@@ -1,5 +1,5 @@
 import React ,{useState}from 'react'
-import { InputLabel,TextField,Select,MenuItem,Button,Grid,Typography,ListItemText,ListItem, Divider } from '@material-ui/core'
+import { InputLabel,TextField,Select,MenuItem,Button,Grid,Typography,ListItemText,ListItem, Divider, CircularProgress } from '@material-ui/core'
 import {useForm,FormProvider} from 'react-hook-form'
 import usestyles from './styles'
 import Control from './Controller'
@@ -18,7 +18,7 @@ const Address = ({id,next })=> {
   let methods=useForm();
 let [Options, setOptions] = useState([]);
 let [Option, setOption] = useState('');
-
+console.log(Option)
 console.log(Country);
 
 
@@ -91,17 +91,21 @@ setOption(options[0].id);
 
         <FormProvider {...methods} >
           <form
+           
             onSubmit={((data)=>{
-              data.preventDefault()
-              console.log(data);next({...data,Country,State})
+              
+              data.preventDefault();
+
+             next({...data,Country,State})
               })}
           >
             <Grid container spacing={3}>
-              <Control name="Firstname" label="Firstname" />
-              <Control name="Lastname" label="Lastname" />
-              <Control name="Email" label="Email" />
-              <Control name="Address" label="Address" />
-              <Control name="PotalCode" label="Pincode" />
+              <Control name="firstname" label="Firstname" />
+              <Control name="lastname" label="Lastname" />
+              <Control name="email" label="Email" />
+              <Control name="address" label="Address" />
+              <Control name="city" label="City" />
+              <Control name="postalCode" label="Pincode" />
               <Grid item xs={12} sm={6}>
                 <InputLabel>Select Country</InputLabel>
                 <Select
@@ -159,30 +163,35 @@ setOption(options[0].id);
 }
 
 export default Address
-export let Payment=({shipdata,id,back})=>{
-  console.log(shipdata)
+export let Payment=({shipdata,id,back,oncheckout,next,setorderdetails})=>{
   let classes=useStyles();
   let stripeapi = loadStripe(
     "pk_test_51LlXFRSIpTfYvI0Qcgr4O9HXUKuWHegN1TmF8EBA5YUukDwz49Hy20XyVAqbTCreFfubUeuTABbvBvJqPKeR9kvn00LfXp8SH6"
   );
-  console.log(id)
+console.log(shipdata)
 return (
   <div>
     <Typography variant="h5" style={{ textAlign: "center" }}>
-      OrderSmmary
+      OrderSummary
       <Divider />
     </Typography>
-    {id.line_items.map((prod) => (
-      <ListItem key={prod.id}>
-        <ListItemText
-          primary={prod.name}
-          secondary={`Quantity :${prod.quantity}`}
-        />
-        <Typography variant="body2">
-          {prod.line_total.formatted_with_symbol}
-        </Typography>
-      </ListItem>
-    ))}
+    {id.line_items.length ? (
+      id.line_items.map((prod) => (
+        <ListItem key={prod.id}>
+          <ListItemText
+            primary={prod.name}
+            secondary={`Quantity :${prod.quantity}`}
+          />
+          <Typography variant="body2">
+            {prod.line_total.formatted_with_symbol}
+          </Typography>
+        </ListItem>
+      ))
+    ) : (
+      <div sx={{ display: "flex" }}>
+        <CircularProgress />
+      </div>
+    )}
     <ListItem>
       <ListItemText primary="Total Price:" />
       <Typography>{id.subtotal.formatted_with_symbol}</Typography>
@@ -193,17 +202,52 @@ return (
       <ElementsConsumer>
         {({ elements, stripe }) => (
           <form
-            onSubmit={ async (e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
               let cardElement = elements.getElement(CardElement);
 
-              let {error,payment}=await stripe.createPaymentMethod({type:'card',card:cardElement})
-            
-            if(error)console.log(error)
-            else {
+              let { error, paymentMethod } = await stripe.createPaymentMethod({
+                type: "card",
+                card: cardElement,
+              });
 
-            }
-            
+              if (error) console.log(error);
+              else {
+                let orderdetails = {
+                  orderitems: id.line_items,
+                  customer: {
+                    firstname: shipdata.target[0].value,
+                    lastname: shipdata.target[1].value,
+                    email: shipdata.target[2].value,
+                  },
+                  billing: {
+                    name: "Primary",
+                    street: shipdata.target[3].value,
+                    town_city: shipdata.target[4].value,
+                    country: shipdata.Country,
+                    // country_state: shipdata.State,
+                    postal_zip_code: shipdata.target[5].value,
+                  },
+                  shipping: {
+                    name: "Primary",
+                    street: shipdata.target[3].value,
+                    town_city: shipdata.target[4].value,
+                    country: shipdata.Country,
+                    country_state: shipdata.State,
+                    postal_zip_code: shipdata.target[5].value,
+                  },
+                  fulfillment: { shipping_method: "ship_LvJjoPEkR5e0nO" },
+                  payment: {
+                    gateway: "stripe",
+                    stripe: {
+                      payment_method_id: paymentMethod.id,
+                    },
+                  },
+                };
+                oncheckout(id, orderdetails);
+                setorderdetails(orderdetails);
+                next();
+              }
             }}
           >
             <CardElement className={classes.card} />
@@ -226,8 +270,28 @@ return (
 );
 
 }
-export let Confirm =()=>{
+export let Confirm =({orderdetails})=>{
 
 
+console.log(orderdetails)
+return (
+  <div>
 
+    {orderdetails?<>
+    <Typography variant="h5">
+      Thank You For the Purchase {orderdetails.firstname}  We'll get Back to you soon
+    </Typography>
+    <Divider />
+    <Typography>Order ref :ref </Typography>
+    <br />
+    <Button component={Link} to="/" variant="outlined" color="secondary">
+      {" "}
+      Back to Home
+    </Button></>:
+      <div style={{display:'flex'}}>
+    <CircularProgress/>
+    </div>
+    }
+  </div>
+);
 }

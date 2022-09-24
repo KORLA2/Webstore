@@ -36,7 +36,7 @@ const Products = ({product,addcart}) => {
         </Typography>
       </CardContent>
       <CardActions className={classes.cardActions}>
-        <Button size="small" color="primary" onClick={()=>
+        <Button size="medium"  variant='contained' color="primary" onClick={()=>
 
           addcart(product.id,1)
 
